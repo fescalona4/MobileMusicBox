@@ -17,6 +17,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.musicbox.mobilemusicbox.DetailActivity;
+import com.musicbox.mobilemusicbox.HomeActivity;
 import com.musicbox.mobilemusicbox.R;
 import com.musicbox.mobilemusicbox.Song;
 import com.musicbox.mobilemusicbox.SongListAdapter;
@@ -31,10 +32,6 @@ import retrofit.Retrofit;
 
 
 public class MusicFragment extends Fragment {
-
-    public static final String SONG_ID = "SONG_ID";
-    public static final String PHOTOS_BASE_URL = "http://cubanmusicbox.com/images/uploads/";
-    public static final String ENDPOINT = "http://cubanmusicbox.com";
 
     ProgressBar pb;
     List<Song> songList;
@@ -79,7 +76,7 @@ public class MusicFragment extends Fragment {
         pb.setVisibility(View.VISIBLE);
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(ENDPOINT)
+                .baseUrl(HomeActivity.ENDPOINT)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
@@ -117,7 +114,7 @@ public class MusicFragment extends Fragment {
 
                     Song song = songList.get(position);
 
-                    intent.putExtra(SONG_ID, song.getId());
+                    intent.putExtra(HomeActivity.SONG_ID, song.getId());
 
                     startActivity(intent);
                 }
