@@ -36,7 +36,7 @@ public class DetailActivity extends AppCompatActivity {
         pb.setVisibility(View.INVISIBLE);
 
 
-        Float songId = getIntent().getFloatExtra(MainActivity.SONG_ID, 100);
+        Float songId = getIntent().getFloatExtra(HomeActivity.SONG_ID, 100);
 
         //Song song = DataProvider.songMap.get(songId);
         requestData(songId.toString());
@@ -52,7 +52,7 @@ public class DetailActivity extends AppCompatActivity {
 
         if (song != null){
 
-            TextView tv = (TextView) findViewById(R.id.nameText);
+            TextView tv = (TextView) findViewById(R.id.titleText);
             tv.setText(song.getTitle());
 
             TextView artistText = (TextView) findViewById(R.id.artistText);
@@ -67,7 +67,7 @@ public class DetailActivity extends AppCompatActivity {
         pb.setVisibility(View.VISIBLE);
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(MainActivity.ENDPOINT)
+                .baseUrl(HomeActivity.ENDPOINT)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 

@@ -48,8 +48,8 @@ public class SongListAdapter extends ArrayAdapter<Song> {
 
         Song song = songs.get(position);
 
-        TextView nameText = (TextView) convertView.findViewById(R.id.nameText);
-        nameText.setText(song.getTitle());
+        TextView titleText = (TextView) convertView.findViewById(R.id.titleText1);
+        titleText.setText(song.getTitle());
 
         TextView artistText = (TextView) convertView.findViewById(R.id.artistText);
         artistText.setText(song.getArtist());
@@ -90,7 +90,7 @@ public class SongListAdapter extends ArrayAdapter<Song> {
             Song song = container.song;
 
             try {
-                String imageUrl = MainActivity.PHOTOS_BASE_URL + song.getImage();
+                String imageUrl = HomeActivity.PHOTOS_BASE_URL + song.getImage();
                 InputStream in = (InputStream) new URL(imageUrl).getContent();
                 Bitmap bitmap = BitmapFactory.decodeStream(in);
                 song.setBitmap(bitmap);

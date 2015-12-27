@@ -1,20 +1,26 @@
-package com.musicbox.mobilemusicbox;
+package fragments;
 
+import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import android.support.annotation.Nullable;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
+
+import com.musicbox.mobilemusicbox.DetailActivity;
+import com.musicbox.mobilemusicbox.R;
+import com.musicbox.mobilemusicbox.Song;
+import com.musicbox.mobilemusicbox.SongListAdapter;
+import com.musicbox.mobilemusicbox.SongsApi;
 
 import java.util.List;
 
@@ -23,7 +29,8 @@ import retrofit.GsonConverterFactory;
 import retrofit.Response;
 import retrofit.Retrofit;
 
-public class MainActivity extends AppCompatActivity {
+
+public class MusicFragment extends Fragment {
 
     public static final String SONG_ID = "SONG_ID";
     public static final String PHOTOS_BASE_URL = "http://cubanmusicbox.com/images/uploads/";
@@ -32,14 +39,16 @@ public class MainActivity extends AppCompatActivity {
     ProgressBar pb;
     List<Song> songList;
 
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        pb = (ProgressBar) findViewById(R.id.progressBar1);
+
+        View rootView = inflater.inflate(R.layout.fragment_music, container, false);
+
+
+
+        pb = (ProgressBar) rootView.findViewById(R.id.progressBar1);
         pb.setVisibility(View.INVISIBLE);
 
 
@@ -48,39 +57,21 @@ public class MainActivity extends AppCompatActivity {
             requestData();
         }
         else{
-            Toast.makeText(this, "Network is not available", Toast.LENGTH_LONG).show();
+            Toast.makeText(rootView.getContext(), "Network is not available", Toast.LENGTH_LONG).show();
         }
 
+
+
+
+
+
+
+
+
+
+        return rootView;
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-
-            if(isOnline()){
-                requestData();
-            }
-            else{
-                Toast.makeText(this, "Network is not available", Toast.LENGTH_LONG).show();
-            }
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
 
 
     private void requestData(){
@@ -110,19 +101,19 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
     protected void updateDisplay(){
 
         if (songList != null){
-            SongListAdapter adapter = new SongListAdapter(
-                    this, R.layout.list_item, songList);
+            SongListAdapter adapter = new SongListAdapter(getActivity(), R.layout.list_item, songList);
 
-            ListView lv = (ListView) findViewById(R.id.listView);
+            ListView lv = (ListView) getView().findViewById(R.id.listView);
             lv.setAdapter(adapter);
 
             lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    Intent intent = new Intent(MainActivity.this, DetailActivity.class);
+                    Intent intent = new Intent(getActivity(), DetailActivity.class);
 
                     Song song = songList.get(position);
 
@@ -135,8 +126,9 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
     protected boolean isOnline(){
-        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager cm = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
         if(netInfo != null && netInfo.isConnectedOrConnecting()){
             return true;
@@ -146,6 +138,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
+
+
 }
-
-
