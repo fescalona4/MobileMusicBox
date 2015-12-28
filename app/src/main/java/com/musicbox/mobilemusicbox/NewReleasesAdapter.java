@@ -1,23 +1,13 @@
 package com.musicbox.mobilemusicbox;
 
-import android.app.Activity;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.util.LruCache;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.List;
+import com.squareup.picasso.Picasso;
 
-import fragments.RetainFragment;
+import java.util.List;
 
 /**
  * Created by fescalona on 12/24/2015.
@@ -25,9 +15,6 @@ import fragments.RetainFragment;
 public class NewReleasesAdapter extends RecyclerView.Adapter<SongViewHolder> {
 
     private List<Song> songList;
-    private LruCache<Float, Bitmap> mMemoryCache;
-    final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
-    final int cacheSize = maxMemory / 4;
 
     public NewReleasesAdapter(List<Song> songList) {
         this.songList = songList;
@@ -41,15 +28,6 @@ public class NewReleasesAdapter extends RecyclerView.Adapter<SongViewHolder> {
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.new_music_card, parent, false);
 
-        RetainFragment retainFragment = RetainFragment.findOrCreateRetainFragment(((Activity) parent.getContext()).getFragmentManager());
-        mMemoryCache = retainFragment.mRetainedCache;
-        if (mMemoryCache == null) {
-            // Initialize cache here as usual
-            mMemoryCache = new LruCache<Float, Bitmap>(cacheSize);
-            retainFragment.mRetainedCache = mMemoryCache;
-        }
-
-
         return new SongViewHolder(itemView);
     }
 
@@ -62,20 +40,9 @@ public class NewReleasesAdapter extends RecyclerView.Adapter<SongViewHolder> {
         holder.id = song.getId();
         holder.bitmap.setImageDrawable(null);
 
-        //display img
-        Object bitmap = mMemoryCache.get(song.getId());
-        if (bitmap != null) {
-            holder.bitmap.setImageBitmap((Bitmap)bitmap);
-            //Log.v("cubanmusicbox", "setImageBitmap with mMemoryCache in NewReleasesAdapter()");
-        } else {
-            SongAndView container = new SongAndView();
-            container.song = song;
-            container.holder = holder;
+        String imageUrl = HomeActivity.PHOTOS_BASE_URL + song.getImage();
+        Picasso.with(holder.bitmap.getContext()).load(imageUrl).into(holder.bitmap);
 
-            Log.v("cubanmusicbox", "Calling ImageLoader in NewReleasesAdapter()");
-            ImageLoader loader = new ImageLoader();
-            loader.execute(container);
-        }
     }
 
 
@@ -91,43 +58,4 @@ public class NewReleasesAdapter extends RecyclerView.Adapter<SongViewHolder> {
         return song.getId().longValue();
     }
 
-
-    class SongAndView {
-        public Song song;
-        public SongViewHolder holder;
-        public Bitmap bitmap;
-
-    }
-
-    private class ImageLoader extends AsyncTask<SongAndView, Void, SongAndView> {
-
-        @Override
-        protected SongAndView doInBackground(SongAndView... params) {
-
-            SongAndView container = params[0];
-            Song song = container.song;
-
-            try {
-                String imageUrl = HomeActivity.PHOTOS_BASE_URL + song.getImage();
-                InputStream in = (InputStream) new URL(imageUrl).getContent();
-                Bitmap bitmap = BitmapFactory.decodeStream(in);
-                song.setBitmap(bitmap);
-                in.close();
-                container.bitmap = bitmap;
-                return container;
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(SongAndView result) {
-            result.holder.bitmap.setImageDrawable(null);
-            result.holder.bitmap.setImageBitmap(result.bitmap);
-            mMemoryCache.put(result.song.getId(), result.bitmap);
-        }
-    }
 }
