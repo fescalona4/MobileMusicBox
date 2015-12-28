@@ -1,9 +1,11 @@
 package com.musicbox.mobilemusicbox;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.util.LruCache;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,11 +14,15 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.okhttp.internal.DiskLruCache;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
+
+import fragments.RetainFragment;
 
 /**
  * Created by fescalona on 12/24/2015.
@@ -25,7 +31,13 @@ public class SongListAdapter extends ArrayAdapter<Song> {
 
     private List<Song> songs;
 
-    private LruCache<Float, Bitmap> imageCache;
+    private LruCache<Float, Bitmap> mMemoryCache;
+    private DiskLruCache mDiskLruCache;
+    private final Object mDiskCacheLock = new Object();
+    private boolean mDiskCacheStarting = true;
+    private static final int DISK_CACHE_SIZE = 1024 * 1024 * 10; // 10MB
+    private static final String DISK_CACHE_SUBDIR = "thumbnails";
+
 
     public SongListAdapter(Context context, int resource, List<Song> objects) {
         super(context, resource, objects);
@@ -33,7 +45,14 @@ public class SongListAdapter extends ArrayAdapter<Song> {
 
         final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
         final int cacheSize = maxMemory / 4;
-        imageCache = new LruCache<>(cacheSize);
+
+        RetainFragment retainFragment = RetainFragment.findOrCreateRetainFragment(((Activity) context).getFragmentManager());
+        mMemoryCache = retainFragment.mRetainedCache;
+        if (mMemoryCache == null) {
+            // Initialize cache here as usual
+            mMemoryCache = new LruCache<Float, Bitmap>(cacheSize);
+            retainFragment.mRetainedCache = mMemoryCache;
+        }
     }
 
 
@@ -54,17 +73,20 @@ public class SongListAdapter extends ArrayAdapter<Song> {
         TextView artistText = (TextView) convertView.findViewById(R.id.artistText);
         artistText.setText(song.getArtist());
 
+        ImageView imageView = (ImageView) convertView.findViewById(R.id.imageView1);
+        imageView.setImageDrawable(null);
 
         //display img
-        Object bitmap = imageCache.get(song.getId());
+        Object bitmap = mMemoryCache.get(song.getId());
         if (bitmap != null) {
             ImageView iv = (ImageView) convertView.findViewById(R.id.imageView1);
-            iv.setImageBitmap(song.getBitmap());
+            iv.setImageBitmap((Bitmap) bitmap);
         } else {
             SongAndView container = new SongAndView();
             container.song = song;
             container.view = convertView;
 
+            Log.v("cubanmusicbox", "Calling ImageLoader in SongListAdapter()");
             ImageLoader loader = new ImageLoader();
             loader.execute(container);
         }
@@ -82,6 +104,7 @@ public class SongListAdapter extends ArrayAdapter<Song> {
     }
 
     private class ImageLoader extends AsyncTask<SongAndView, Void, SongAndView> {
+
 
         @Override
         protected SongAndView doInBackground(SongAndView... params) {
@@ -107,9 +130,10 @@ public class SongListAdapter extends ArrayAdapter<Song> {
 
         @Override
         protected void onPostExecute(SongAndView result) {
-            ImageView image = (ImageView) result.view.findViewById(R.id.imageView1);
-            image.setImageBitmap(result.bitmap);
-            imageCache.put(result.song.getId(), result.bitmap);
+            ImageView imageView = (ImageView) result.view.findViewById(R.id.imageView1);
+            imageView.setImageDrawable(null);
+            imageView.setImageBitmap(result.bitmap);
+            mMemoryCache.put(result.song.getId(), result.bitmap);
         }
     }
 }

@@ -22,15 +22,12 @@
         android:text="See More" />
 
 
-
-    <android.support.v7.widget.RecyclerView
-        xmlns:android="http://schemas.android.com/apk/res/android"
+    <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/newSongsGridView"
         android:layout_width="match_parent"
         android:layout_height="220dp"
         android:layout_alignStart="@+id/newReleasesLabel"
-        android:layout_below="@+id/newReleasesLabel"/>
-
+        android:layout_below="@+id/newReleasesLabel" />
 
 
     <TextView
@@ -40,20 +37,18 @@
         android:layout_alignBottom="@+id/topBtn"
         android:layout_alignStart="@+id/newSongsGridView"
         android:text="Top Songs"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-         />
+        android:textAppearance="?android:attr/textAppearanceLarge" />
 
-    <android.support.v7.widget.RecyclerView
-        xmlns:android="http://schemas.android.com/apk/res/android"
+    <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/topSongsRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="220dp"
-        android:layout_below="@+id/topSongsLabel"/>
+        android:layout_below="@+id/topSongsLabel" />
 
 
     <Button
         android:id="@+id/newBtn"
-        style="@style/Base.Widget.AppCompat.Button.Small"
+        style="@style/Base.Widget.AppCompat.Button.Colored"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
@@ -62,6 +57,7 @@
 
     <Button
         android:id="@+id/topBtn"
+        style="@style/Base.Widget.AppCompat.Button.Colored"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignEnd="@+id/newSongsGridView"
@@ -75,7 +71,6 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true" />
-
 
 
 </RelativeLayout>

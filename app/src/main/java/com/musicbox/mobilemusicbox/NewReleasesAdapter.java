@@ -1,7 +1,6 @@
 package com.musicbox.mobilemusicbox;
 
 import android.app.Activity;
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -12,10 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-
-import com.squareup.picasso.Picasso;
-
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -27,17 +22,15 @@ import fragments.RetainFragment;
 /**
  * Created by fescalona on 12/24/2015.
  */
-public class MusicCardAdapter extends RecyclerView.Adapter<SongViewHolder> {
+public class NewReleasesAdapter extends RecyclerView.Adapter<SongViewHolder> {
 
     private List<Song> songList;
     private LruCache<Float, Bitmap> mMemoryCache;
     final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
     final int cacheSize = maxMemory / 4;
 
-
-    public MusicCardAdapter(List<Song> songList) {
+    public NewReleasesAdapter(List<Song> songList) {
         this.songList = songList;
-
 
     }
 
@@ -46,11 +39,7 @@ public class MusicCardAdapter extends RecyclerView.Adapter<SongViewHolder> {
     public SongViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.music_card, parent, false);
-
-
-
-
+                .inflate(R.layout.new_music_card, parent, false);
 
         RetainFragment retainFragment = RetainFragment.findOrCreateRetainFragment(((Activity) parent.getContext()).getFragmentManager());
         mMemoryCache = retainFragment.mRetainedCache;
@@ -73,19 +62,17 @@ public class MusicCardAdapter extends RecyclerView.Adapter<SongViewHolder> {
         holder.id = song.getId();
         holder.bitmap.setImageDrawable(null);
 
-        //Picasso.with(holder.bitmap.getContext()).load("http://i.imgur.com/DvpvklR.png").into(holder.bitmap);
-
         //display img
         Object bitmap = mMemoryCache.get(song.getId());
         if (bitmap != null) {
-            holder.bitmap.setImageBitmap((Bitmap) bitmap);
-            //Log.v("cubanmusicbox", "setImageBitmap with mMemoryCache in MusicCardAdapter()");
+            holder.bitmap.setImageBitmap((Bitmap)bitmap);
+            //Log.v("cubanmusicbox", "setImageBitmap with mMemoryCache in NewReleasesAdapter()");
         } else {
             SongAndView container = new SongAndView();
             container.song = song;
             container.holder = holder;
 
-            Log.v("cubanmusicbox", "Calling ImageLoader in MusicCardAdapter()");
+            Log.v("cubanmusicbox", "Calling ImageLoader in NewReleasesAdapter()");
             ImageLoader loader = new ImageLoader();
             loader.execute(container);
         }
@@ -141,10 +128,6 @@ public class MusicCardAdapter extends RecyclerView.Adapter<SongViewHolder> {
             result.holder.bitmap.setImageDrawable(null);
             result.holder.bitmap.setImageBitmap(result.bitmap);
             mMemoryCache.put(result.song.getId(), result.bitmap);
-
-
         }
     }
-
-
 }

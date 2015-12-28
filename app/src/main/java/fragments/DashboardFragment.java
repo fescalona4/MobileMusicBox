@@ -1,6 +1,7 @@
 package fragments;
 
 import android.app.Fragment;
+import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
@@ -14,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -45,6 +47,8 @@ public class DashboardFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+        getActivity().setTitle("Dashboard");
         View rootView = inflater.inflate(R.layout.fragment_dashboard, container, false);
 
 
@@ -58,6 +62,28 @@ public class DashboardFragment extends Fragment {
         } else {
             Toast.makeText(rootView.getContext(), "Network is not available", Toast.LENGTH_LONG).show();
         }
+
+
+        //See more button click
+        final Button newBtn = (Button) rootView.findViewById(R.id.newBtn);
+        newBtn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // Perform action on click
+                Log.v("cubanmusicbox", "see more clicked");
+                FragmentManager fm = getFragmentManager();
+                fm.beginTransaction().replace(R.id.content_frame, new NewReleasesFragment()).addToBackStack(null).commit();
+            }
+        });
+
+        final Button topBtn = (Button) rootView.findViewById(R.id.topBtn);
+        topBtn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // Perform action on click
+                Log.v("cubanmusicbox", "see more clicked");
+                FragmentManager fm = getFragmentManager();
+                fm.beginTransaction().replace(R.id.content_frame, new TopFragment()).addToBackStack(null).commit();
+            }
+        });
 
 
         return rootView;
