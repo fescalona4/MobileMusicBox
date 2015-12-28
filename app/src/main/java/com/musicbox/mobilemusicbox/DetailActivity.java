@@ -1,25 +1,15 @@
 package com.musicbox.mobilemusicbox;
 
-import android.app.Activity;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.util.LruCache;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
+import com.squareup.picasso.Picasso;
 
-import fragments.RetainFragment;
 import retrofit.Callback;
 import retrofit.GsonConverterFactory;
 import retrofit.Response;
@@ -29,9 +19,6 @@ public class DetailActivity extends AppCompatActivity {
 
     ProgressBar pb;
     Song song;
-    final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
-    final int cacheSize = maxMemory / 4;
-    private LruCache<Float, Bitmap> mMemoryCache;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,22 +35,13 @@ public class DetailActivity extends AppCompatActivity {
         requestData(songId.toString());
 
 
-        RetainFragment retainFragment = RetainFragment.findOrCreateRetainFragment(getFragmentManager());
-        mMemoryCache = retainFragment.mRetainedCache;
-        if (mMemoryCache == null) {
-            // Initialize cache here as usual
-            mMemoryCache = new LruCache<Float, Bitmap>(cacheSize);
-            retainFragment.mRetainedCache = mMemoryCache;
-        }
-
-
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
 
-    protected void updateDisplay(){
+    protected void updateDisplay() {
 
-        if (song != null){
+        if (song != null) {
 
             TextView tv = (TextView) findViewById(R.id.titleText);
             tv.setText(song.getTitle());
@@ -75,26 +53,14 @@ public class DetailActivity extends AppCompatActivity {
             ImageView imageView = (ImageView) findViewById(R.id.imageView);
             imageView.setImageDrawable(null);
 
-            //display img
-            Object bitmap = mMemoryCache.get(song.getId());
-            if (bitmap != null) {
-                ImageView iv = (ImageView) findViewById(R.id.imageView);
-                iv.setImageBitmap((Bitmap)bitmap);
-                Log.v("cubanmusicbox", "Calling mMemoryCache...");
-            } else {
-                SongAndView container = new SongAndView();
-                container.song = song;
-
-                Log.v("cubanmusicbox", "Calling ImageLoader...");
-                ImageLoader loader = new ImageLoader();
-                loader.execute(container);
-            }
+            String imageUrl = HomeActivity.PHOTOS_BASE_URL + song.getImage();
+            Picasso.with(imageView.getContext()).load(imageUrl).into(imageView);
         }
 
     }
 
 
-    private void requestData( String id ){
+    private void requestData(String id) {
         pb.setVisibility(View.VISIBLE);
 
         Retrofit retrofit = new Retrofit.Builder()
@@ -120,47 +86,5 @@ public class DetailActivity extends AppCompatActivity {
 
     }
 
-
-
-    class SongAndView {
-        public Song song;
-        public View view;
-        public Bitmap bitmap;
-
-    }
-
-    private class ImageLoader extends AsyncTask<SongAndView, Void, SongAndView> {
-
-
-        @Override
-        protected SongAndView doInBackground(SongAndView... params) {
-
-            SongAndView container = params[0];
-            Song song = container.song;
-
-            try {
-                String imageUrl = HomeActivity.PHOTOS_BASE_URL + song.getImage();
-                InputStream in = (InputStream) new URL(imageUrl).getContent();
-                Bitmap bitmap = BitmapFactory.decodeStream(in);
-                song.setBitmap(bitmap);
-                in.close();
-                container.bitmap = bitmap;
-                return container;
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(SongAndView result) {
-            ImageView imageView = (ImageView) findViewById(R.id.imageView);
-            imageView.setImageDrawable(null);
-            imageView.setImageBitmap(result.bitmap);
-            mMemoryCache.put(result.song.getId(), result.bitmap);
-        }
-    }
 
 }

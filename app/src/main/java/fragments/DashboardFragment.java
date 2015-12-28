@@ -1,32 +1,29 @@
 package fragments;
 
+
+
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Context;
-import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.GridView;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.musicbox.mobilemusicbox.DetailActivity;
 import com.musicbox.mobilemusicbox.HomeActivity;
 import com.musicbox.mobilemusicbox.MusicCardAdapter;
 import com.musicbox.mobilemusicbox.R;
 import com.musicbox.mobilemusicbox.Song;
-import com.musicbox.mobilemusicbox.SongListAdapter;
 import com.musicbox.mobilemusicbox.SongsApi;
 
 import java.util.List;

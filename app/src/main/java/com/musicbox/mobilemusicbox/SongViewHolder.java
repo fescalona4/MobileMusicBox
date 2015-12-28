@@ -31,7 +31,6 @@ public class SongViewHolder extends RecyclerView.ViewHolder implements View.OnCl
     }
 
 
-
     @Override
     public void onClick(View v) {
         //Toast.makeText(v.getContext(), "position = " + id, Toast.LENGTH_SHORT).show();

@@ -43,11 +43,10 @@ public class SongListAdapter extends ArrayAdapter<Song> {
         artistText.setText(song.getArtist());
 
         ImageView imageView = (ImageView) convertView.findViewById(R.id.imageView1);
-        //imageView.setImageDrawable(null);
+        imageView.setImageDrawable(null);
 
         String imageUrl = HomeActivity.PHOTOS_BASE_URL + song.getImage();
         Picasso.with(getContext()).load(imageUrl).into(imageView);
-
 
 
         return convertView;

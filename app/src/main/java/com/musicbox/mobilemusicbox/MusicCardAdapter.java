@@ -16,10 +16,8 @@ public class MusicCardAdapter extends RecyclerView.Adapter<SongViewHolder> {
 
     private List<Song> songList;
 
-
     public MusicCardAdapter(List<Song> songList) {
         this.songList = songList;
-
 
     }
 

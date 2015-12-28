@@ -1,8 +1,8 @@
 package com.musicbox.mobilemusicbox;
 
+
 import android.app.FragmentManager;
 import android.content.Context;
-import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -24,8 +24,8 @@ public class HomeActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     public static final String SONG_ID = "SONG_ID";
-    public static final String PHOTOS_BASE_URL = "http://cubanmusicbox.com/images/uploads/";
     public static final String ENDPOINT = "http://cubanmusicbox.com";
+    public static final String PHOTOS_BASE_URL = ENDPOINT + "/images/uploads/";
 
 
     @Override
@@ -91,7 +91,6 @@ public class HomeActivity extends AppCompatActivity
     }
 
 
-
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -124,13 +123,12 @@ public class HomeActivity extends AppCompatActivity
         return true;
     }
 
-    public boolean isOnline(){
+    public boolean isOnline() {
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
-        if(netInfo != null && netInfo.isConnectedOrConnecting()){
+        if (netInfo != null && netInfo.isConnectedOrConnecting()) {
             return true;
-        }
-        else{
+        } else {
             return false;
         }
     }

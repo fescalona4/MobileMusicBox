@@ -1,14 +1,14 @@
 package fragments;
 
+
 import android.app.Fragment;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentActivity;
+
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -18,8 +18,6 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.musicbox.mobilemusicbox.HomeActivity;
-import com.musicbox.mobilemusicbox.ItemOffsetDecoration;
-import com.musicbox.mobilemusicbox.MusicCardAdapter;
 import com.musicbox.mobilemusicbox.NewReleasesAdapter;
 import com.musicbox.mobilemusicbox.R;
 import com.musicbox.mobilemusicbox.Song;
