@@ -20,12 +20,17 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.musicbox.mobilemusicbox.HomeActivity;
 import com.musicbox.mobilemusicbox.MusicCardAdapter;
 import com.musicbox.mobilemusicbox.R;
 import com.musicbox.mobilemusicbox.Song;
 import com.musicbox.mobilemusicbox.SongsApi;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import retrofit.Callback;
@@ -91,9 +96,13 @@ public class DashboardFragment extends Fragment {
 
         pb.setVisibility(View.VISIBLE);
 
+        Gson gson = new GsonBuilder()
+                .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+                .create();
+
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(HomeActivity.ENDPOINT)
-                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
 
         SongsApi api = retrofit.create(SongsApi.class);
@@ -126,7 +135,10 @@ public class DashboardFragment extends Fragment {
             llm.setOrientation(LinearLayoutManager.HORIZONTAL);
             view.setLayoutManager(llm);
 
-            MusicCardAdapter adapter = new MusicCardAdapter(songList);
+            List<Song> newList = new ArrayList<Song>(songList);
+            Collections.sort(newList, Song.SongDateComparator);
+
+            MusicCardAdapter adapter = new MusicCardAdapter(newList);
             view.setAdapter(adapter);
 
 
@@ -136,7 +148,10 @@ public class DashboardFragment extends Fragment {
             llm2.setOrientation(LinearLayoutManager.HORIZONTAL);
             view2.setLayoutManager(llm2);
 
-            MusicCardAdapter adapter2 = new MusicCardAdapter(songList);
+            List<Song> topList = new ArrayList<Song>(songList);
+            Collections.sort(topList, Song.SongPlayCountComparator);
+
+            MusicCardAdapter adapter2 = new MusicCardAdapter(topList);
             view2.setAdapter(adapter2);
 
         }

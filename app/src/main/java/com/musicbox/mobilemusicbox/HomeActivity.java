@@ -46,26 +46,28 @@ public class HomeActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         FragmentManager fm = getFragmentManager();
-        fm.popBackStack();
-        fm.beginTransaction().add(R.id.content_frame, new DashboardFragment()).commit();
+        //fm.popBackStack();
+        fm.beginTransaction().replace(R.id.content_frame, new DashboardFragment()).commit();
     }
 
     @Override
     public void onBackPressed() {
+        // If the drawer is open, back will close it
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        } else {
-            //super.onBackPressed();
-
-            int count = getFragmentManager().getBackStackEntryCount();
-
-            if (count == 0) {
-                super.onBackPressed();
-            } else {
-                getFragmentManager().popBackStack();
-            }
+            return;
         }
+
+        // Otherwise, it may return to the previous fragment stack
+        FragmentManager fragmentManager = getFragmentManager();
+        if (fragmentManager.getBackStackEntryCount() > 0) {
+            fragmentManager.popBackStack();
+        } else {
+            // Lastly, it will rely on the system behavior for back
+            super.onBackPressed();
+        }
+
     }
 
     @Override

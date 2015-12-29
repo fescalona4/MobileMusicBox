@@ -16,6 +16,8 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.musicbox.mobilemusicbox.DetailActivity;
 import com.musicbox.mobilemusicbox.HomeActivity;
 import com.musicbox.mobilemusicbox.R;
@@ -23,6 +25,7 @@ import com.musicbox.mobilemusicbox.Song;
 import com.musicbox.mobilemusicbox.SongListAdapter;
 import com.musicbox.mobilemusicbox.SongsApi;
 
+import java.util.Collections;
 import java.util.List;
 
 import retrofit.Callback;
@@ -75,9 +78,13 @@ public class MusicFragment extends Fragment {
 
         pb.setVisibility(View.VISIBLE);
 
+        Gson gson = new GsonBuilder()
+                .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+                .create();
+
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(HomeActivity.ENDPOINT)
-                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
 
         SongsApi api = retrofit.create(SongsApi.class);
@@ -100,6 +107,8 @@ public class MusicFragment extends Fragment {
 
 
     protected void updateDisplay(){
+
+        Collections.sort(songList, Song.SongDateComparator);
 
         if (songList != null){
             SongListAdapter adapter = new SongListAdapter(getActivity(), R.layout.list_item, songList);

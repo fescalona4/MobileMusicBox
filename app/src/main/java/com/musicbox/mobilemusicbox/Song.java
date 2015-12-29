@@ -2,6 +2,9 @@ package com.musicbox.mobilemusicbox;
 
 import android.graphics.Bitmap;
 
+import java.util.Comparator;
+import java.util.Date;
+
 /**
  * Created by fescalona on 12/24/2015.
  */
@@ -14,9 +17,9 @@ public class Song {
     private String url;
     private Bitmap bitmap;
 
-    private String playCount;
+    private int playCount;
     private String downloadCount;
-    private String dateAdded;
+    private Date dateAdded;
     private String filter;
 
     public Song() {
@@ -84,11 +87,11 @@ public class Song {
         this.bitmap = bitmap;
     }
 
-    public String getPlayCount() {
+    public int getPlayCount() {
         return playCount;
     }
 
-    public void setPlayCount(String playCount) {
+    public void setPlayCount(int playCount) {
         this.playCount = playCount;
     }
 
@@ -100,11 +103,11 @@ public class Song {
         this.downloadCount = downloadCount;
     }
 
-    public String getDateAdded() {
+    public Date getDateAdded() {
         return dateAdded;
     }
 
-    public void setDateAdded(String dateAdded) {
+    public void setDateAdded(Date dateAdded) {
         this.dateAdded = dateAdded;
     }
 
@@ -115,4 +118,19 @@ public class Song {
     public void setFilter(String filter) {
         this.filter = filter;
     }
+
+    public static Comparator<Song> SongPlayCountComparator = new Comparator<Song>() {
+        @Override
+        public int compare(Song lhs, Song rhs) {
+            return rhs.getPlayCount() - lhs.getPlayCount();
+        }
+    };
+
+    public static Comparator<Song> SongDateComparator = new Comparator<Song>() {
+        @Override
+        public int compare(Song lhs, Song rhs) {
+            return rhs.getDateAdded().compareTo(lhs.dateAdded);
+        }
+    };
+
 }
