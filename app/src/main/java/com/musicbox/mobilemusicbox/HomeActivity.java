@@ -2,10 +2,14 @@ package com.musicbox.mobilemusicbox;
 
 
 import android.app.FragmentManager;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -27,6 +31,10 @@ public class HomeActivity extends AppCompatActivity
     public static final String ENDPOINT = "http://cubanmusicbox.com";
     public static final String PHOTOS_BASE_URL = ENDPOINT + "/images/uploads/";
 
+    Intent playbackServiceIntent;
+    MusicService musicSrv;
+    private Intent playIntent;
+    private boolean musicBound=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +77,41 @@ public class HomeActivity extends AppCompatActivity
         }
 
     }
+
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if(playIntent==null){
+            playIntent = new Intent(this, MusicService.class);
+            startService(playIntent);
+            bindService(playIntent, musicConnection, Context.BIND_AUTO_CREATE);
+
+        }
+    }
+
+    //connect to the service
+    private ServiceConnection musicConnection = new ServiceConnection(){
+
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            MusicService.MusicBinder binder = (MusicService.MusicBinder)service;
+            //get service
+            musicSrv = binder.getService();
+            //pass list
+            musicBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            musicBound = false;
+        }
+    };
+
+
+
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -133,5 +176,12 @@ public class HomeActivity extends AppCompatActivity
         } else {
             return false;
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        stopService(playIntent);
+        musicSrv=null;
+        super.onDestroy();
     }
 }

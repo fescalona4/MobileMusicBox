@@ -4,4 +4,5 @@
     <color name="colorPrimaryDark">#0288d1</color>
     <color name="colorAccent">#ff6e40</color>
     <color name="colorAccentDark">#E64A19</color>
+    <color name="bt_accent">#00B8D4</color>
 </resources>

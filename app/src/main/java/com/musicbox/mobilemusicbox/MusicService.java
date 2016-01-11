@@ -43,6 +43,7 @@ public class MusicService extends Service implements
         super.onCreate();
         //initialize position
         songPosn = 0;
+        songs = new ArrayList();
         //create player
         player = new MediaPlayer();
         initMusicPlayer();
@@ -78,6 +79,7 @@ public class MusicService extends Service implements
 
     @Override
     public boolean onError(MediaPlayer mp, int what, int extra) {
+        Log.e("MUSIC SERVICE", "onError");
         return false;
     }
 
@@ -85,6 +87,7 @@ public class MusicService extends Service implements
     public void onPrepared(MediaPlayer mp) {
         //start playback
         mp.start();
+        Log.v("MUSIC SERVICE", "started playback" );
     }
 
 
@@ -102,6 +105,7 @@ public class MusicService extends Service implements
         long currSong = playSong.getId().longValue();
 
         try{
+            Log.v("MUSIC SERVICE", "setting data source: " + playSong.getUrl());
             player.setDataSource(playSong.getUrl());
         }
         catch(Exception e){
@@ -114,6 +118,12 @@ public class MusicService extends Service implements
     public void setSong(int songIndex){
         songPosn=songIndex;
     }
+
+
+    public void addSong(Song song){
+        songs.add(song);
+    }
+
 
     private void togglePlayPause() {
         if (player.isPlaying()) {
